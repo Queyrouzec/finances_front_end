@@ -279,18 +279,69 @@ class MonthlyCashFlowPeriod extends CashFlowPeriod {
 }
 
 class YearlyCashFlowPeriod extends CashFlowPeriod {
-  int dayOfTheYear;
+  int month;
+  int day;
   TimeOfDay? timeOfDay;
   int yearsPerFlow;
 
   YearlyCashFlowPeriod({
-    required this.dayOfTheYear,
+    required this.month,
+    required this.day,
     this.timeOfDay,
     required this.yearsPerFlow,
   }) {
-    if (dayOfTheYear > 365) {
-      throw ArgumentError(
-          "Day of the year cannot be over 365. It is currently: $dayOfTheYear");
+    _checkDay();
+  }
+
+  void _checkDay() {
+    if (day <= 28) return;
+    void throwDay(int max) {
+      if (day > max) {
+        // TODO(queyrouzec): change month to a word
+        throw ArgumentError(
+            "the day $day is higher than the amount of days in $month}");
+      }
+    }
+
+    switch (month) {
+      case 1:
+        throwDay(31);
+        break;
+      case 2:
+        throwDay(28);
+        break;
+      case 3:
+        throwDay(31);
+        break;
+      case 4:
+        throwDay(30);
+        break;
+      case 5:
+        throwDay(31);
+        break;
+      case 6:
+        throwDay(30);
+        break;
+      case 7:
+        throwDay(31);
+        break;
+      case 8:
+        throwDay(31);
+        break;
+      case 9:
+        throwDay(30);
+        break;
+      case 10:
+        throwDay(31);
+        break;
+      case 11:
+        throwDay(30);
+        break;
+      case 12:
+        throwDay(31);
+        break;
+      default:
+        throw ArgumentError("that month is not in the valid range");
     }
   }
 }
@@ -300,4 +351,10 @@ class DailyCashFlowPeriod extends CashFlowPeriod {
   TimeOfDay? timeOfDay;
 
   DailyCashFlowPeriod({required this.daysPerFlow});
+}
+
+class TimeBasedCashFlowPeriod extends CashFlowPeriod {
+  int seconds;
+
+  TimeBasedCashFlowPeriod({required this.seconds});
 }
