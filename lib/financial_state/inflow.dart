@@ -1,3 +1,0 @@
-class Inflow {
-  double amount;
-}
