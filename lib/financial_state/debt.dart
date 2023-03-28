@@ -1,14 +1,22 @@
 import 'package:finances_front_end/financial_state/pay_period.dart';
 
-abstract class Debt {}
+abstract class Debt {
+  String name;
+
+  Debt({required this.name});
+}
 
 class CreditCardDebt extends Debt {
-  int amount;
+  double amount;
   CashFlowPeriod cashFlowPeriod;
   List<DebtSnapShot> spenting = [];
   List<DebtPayments> payment = [];
 
-  CreditCardDebt({required this.amount, required this.cashFlowPeriod});
+  CreditCardDebt({
+    required super.name,
+    required this.amount,
+    required this.cashFlowPeriod,
+  });
 }
 
 class DebtSnapShot {
