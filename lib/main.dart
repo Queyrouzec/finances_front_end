@@ -1,4 +1,3 @@
-import 'package:finances_front_end/basic_spreadsheet/basic_spreadsheet.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Finances',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const Scaffold(
-        body: SpreadSheetPage(),
+        body: Center(child: Text('hi')),
       ),
     );
   }

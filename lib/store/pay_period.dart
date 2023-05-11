@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 
-abstract class CashFlowPeriod {
-  // double flowTo365Days(double payAmount) => flowTo1Day(payAmount) * 365;
-  // double flowTo30Days(double payAmount) => flowTo1Day(payAmount) * 30;
-  // double flowTo7Days(double payAmount) => flowTo1Day(payAmount) * 7;
-  // double flowTo1Day(double payAmount);
+part 'pay_period.g.dart';
 
-  // /// null `timeOfDay` is treated as 00:00
-  // DateTime nextFlowPeriod(DateTime prevFlowDate);
-  // DateTime prevFlowPeriod(DateTime nextFlowDate);
-}
+sealed class CashFlowPeriod = _CashFlowPeriod with _$CashFlowPeriod;
 
+abstract class _CashFlowPeriod with Store {}
+
+// TODO(queyrozuec): change with dart 3.0
 enum Weekday {
   sun,
   mon,
@@ -21,34 +18,29 @@ enum Weekday {
   sat,
 }
 
+// TODO(queyrozuec): change with dart 3.0
 Weekday getWeekday(DateTime dateTime) {
   switch (dateTime.weekday) {
     case 1:
       return Weekday.mon;
-
     case 2:
       return Weekday.tues;
-
     case 3:
       return Weekday.wed;
-
     case 4:
       return Weekday.thurs;
-
     case 5:
       return Weekday.fri;
-
     case 6:
       return Weekday.sat;
-
     case 7:
       return Weekday.sun;
-
     default:
       throw ArgumentError("How'd you get here?");
   }
 }
 
+// TODO(queyrozuec): change with dart 3.0
 int getDatetimeWeekday(Weekday weekday) {
   switch (weekday) {
     case Weekday.mon:
@@ -77,21 +69,34 @@ int getDatetimeWeekday(Weekday weekday) {
   }
 }
 
-class WeeklyCashFlowPeriod extends CashFlowPeriod {
+int gDatetimeWeekday(Weekday weekday) => switch (weekday) {
+      Weekday.mon => 1,
+      Weekday.tues => 2,
+      Weekday.wed => 3,
+      Weekday.thurs => 4,
+      Weekday.fri => 5,
+      Weekday.sat => 6,
+      Weekday.sun => 7,
+    };
+
+class WeeklyCashFlowPeriod = _WeeklyCashFlowPeriod with _$WeeklyCashFlowPeriod;
+
+abstract class _WeeklyCashFlowPeriod extends CashFlowPeriod with Store {
+  @observable
   Weekday weekday;
+  @observable
   TimeOfDay? timeOfDay;
+  @observable
   int weeksPerFlow;
 
-  WeeklyCashFlowPeriod({
+  _WeeklyCashFlowPeriod({
     required this.weekday,
     required this.weeksPerFlow,
     this.timeOfDay,
   });
 
-  // @override
   double flowTo7Days(double payAmount) => payAmount / (weeksPerFlow * 7);
 
-  // @override
   double flowTo1Day(double payAmount) => payAmount / (weeksPerFlow * 7);
 
   DateTime _nextWeekday({
@@ -166,12 +171,18 @@ class WeeklyCashFlowPeriod extends CashFlowPeriod {
       _prevWeekday(fromDate: nextFlowDate, weeksPerFlow: weeksPerFlow);
 }
 
-class MonthlyCashFlowPeriod extends CashFlowPeriod {
+class MonthlyCashFlowPeriod = _MonthlyCashFlowPeriod
+    with _$MonthlyCashFlowPeriod;
+
+abstract class _MonthlyCashFlowPeriod extends CashFlowPeriod with Store {
+  @observable
   int day;
+  @observable
   TimeOfDay? timeOfDay;
+  @observable
   int monthsPerFlow;
 
-  MonthlyCashFlowPeriod({
+  _MonthlyCashFlowPeriod({
     required this.day,
     this.timeOfDay,
     required this.monthsPerFlow,
@@ -278,13 +289,19 @@ class MonthlyCashFlowPeriod extends CashFlowPeriod {
   // }
 }
 
-class YearlyCashFlowPeriod extends CashFlowPeriod {
+class YearlyCashFlowPeriod = _YearlyCashFlowPeriod with _$YearlyCashFlowPeriod;
+
+abstract class _YearlyCashFlowPeriod extends CashFlowPeriod with Store {
+  @observable
   int month;
+  @observable
   int day;
+  @observable
   TimeOfDay? timeOfDay;
+  @observable
   int yearsPerFlow;
 
-  YearlyCashFlowPeriod({
+  _YearlyCashFlowPeriod({
     required this.month,
     required this.day,
     this.timeOfDay,
@@ -346,15 +363,22 @@ class YearlyCashFlowPeriod extends CashFlowPeriod {
   }
 }
 
-class DailyCashFlowPeriod extends CashFlowPeriod {
+class DailyCashFlowPeriod = _DailyCashFlowPeriod with _$DailyCashFlowPeriod;
+
+abstract class _DailyCashFlowPeriod extends CashFlowPeriod with Store {
+  @observable
   int daysPerFlow;
+  @observable
   TimeOfDay? timeOfDay;
 
-  DailyCashFlowPeriod({required this.daysPerFlow});
+  _DailyCashFlowPeriod({required this.daysPerFlow});
 }
 
-class TimeBasedCashFlowPeriod extends CashFlowPeriod {
+class TimeBasedCashFlowPeriod = _TimeBasedCashFlowPeriod
+    with _$TimeBasedCashFlowPeriod;
+
+abstract class _TimeBasedCashFlowPeriod extends CashFlowPeriod with Store {
   int seconds;
 
-  TimeBasedCashFlowPeriod({required this.seconds});
+  _TimeBasedCashFlowPeriod({required this.seconds});
 }

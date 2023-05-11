@@ -1,13 +1,23 @@
 import 'package:finances_front_end/financial_state/pay_period.dart';
+import 'package:mobx/mobx.dart';
 
-abstract class Flow {
+part 'monitary_flow.g.dart';
+
+abstract class Flow = _Flow with _$Flow;
+
+abstract class _Flow with Store {
+  @observable
   double amountPerExpectedPeriod;
+  @observable
   CashFlowPeriod cashFlowPeriod;
-  List<Payment> payments = [];
+  @observable
+  ObservableList<Payment> payments = ObservableList();
+  @observable
   DateTime? start;
+  @observable
   DateTime? end;
 
-  Flow({
+  _Flow({
     required this.amountPerExpectedPeriod,
     required this.cashFlowPeriod,
     this.start,
@@ -15,7 +25,7 @@ abstract class Flow {
   });
 }
 
-class Inflow extends Flow {
+abstract class Inflow extends Flow with Store {
   Inflow({
     required super.amountPerExpectedPeriod,
     required super.cashFlowPeriod,
@@ -33,25 +43,36 @@ class OutFlow extends Flow {
   });
 }
 
-class Payment {
+class Payment = _Payment with _$Payment;
+
+abstract class _Payment with Store {
+  @observable
   double amount;
   final DateTime created;
+  @observable
   late DateTime updated;
 
-  Payment(this.amount) : created = DateTime.now() {
+  _Payment(this.amount) : created = DateTime.now() {
     updated = created;
   }
 }
 
-class HourlyWage extends Inflow {
+class HourlyWage = _HourlyWage with _$HourlyWage;
+
+abstract class _HourlyWage extends Inflow with Store {
+  @observable
   double hourlyPay;
+  @observable
   int expectedShifts;
+  @observable
   int expectedHoursPerShift;
+  @observable
   int expectedMinutesPerShift;
 
-  List<WeeklyLimits> weeklyLimits = [];
+  @observable
+  ObservableList<WeeklyLimits> weeklyLimits = ObservableList();
 
-  HourlyWage({
+  _HourlyWage({
     required super.cashFlowPeriod,
     super.start,
     super.end,
@@ -68,13 +89,19 @@ class HourlyWage extends Inflow {
 
 enum Increase { flat, percentage }
 
-class WeeklyLimits {
+class WeeklyLimits = _WeeklyLimits with _$WeeklyLimits;
+
+abstract class _WeeklyLimits with Store {
+  @observable
   int hours;
+  @observable
   int minutes;
+  @observable
   int payIncrease;
+  @observable
   Increase increaseType;
 
-  WeeklyLimits({
+  _WeeklyLimits({
     required this.hours,
     this.minutes = 0,
     required this.increaseType,
